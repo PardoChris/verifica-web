@@ -1,5 +1,5 @@
 // 1. CONFIGURAZIONE: Cambia questo URL domani dopo il deploy su Render
-const API_BASE = "https://ecommerce-pardo.onrender.com"; 
+const API_BASE = "https://ecommerce-pardo.onrender.com/api"; 
 
 async function loadStore() {
     const container = document.getElementById("prodotti");
