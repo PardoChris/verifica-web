@@ -3,12 +3,24 @@
     "id": 1,
     "name": "Computer",
     "price": 500,
-    "stock": 0
+    "stock": 4
   },
   {
     "id": 2,
     "name": "Mouse",
     "price": 20,
-    "stock": 7
+    "stock": 6
+  },
+  {
+    "id": 3,
+    "name": "getgerg",
+    "price": null,
+    "stock": null
+  },
+  {
+    "id": 4,
+    "name": "erbb",
+    "price": 124,
+    "stock": 1
   }
 ]

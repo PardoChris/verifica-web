@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = "https://ecommerce-pardo.onrender.com/api";
+
 
 async function loadStore() {
 
