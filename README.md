@@ -52,3 +52,7 @@ L'IA è stata utilizzata per:
 - progettazione API
 - debug del codice
 - organizzazione dell'architettura
+
+
+https://ecommerce-pardo.onrender.com
+https://pardochris.github.io/verifica-web/
