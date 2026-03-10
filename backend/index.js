@@ -1,33 +1,51 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 
 const app = express();
-
-// Middleware essenziali
 app.use(cors());
-app.use(express.json()); // Necessario per leggere i dati inviati in POST
+app.use(express.json());
 
-// Array finto per simulare un database
-let messages = [
-    { "text": "ciao mondo" },
-    { "text": "test API" }
-];
+const productsPath = path.join(__dirname, "data", "products.json");
+const userPath = path.join(__dirname, "data", "user.json");
 
-// Endpoint GET
-app.get('/api/messages', (req, res) => {
-    res.json(messages);
+const readData = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf-8"));
+const writeData = (filePath, data) => fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+
+app.get("/api/products", (req, res) => res.json(readData(productsPath)));
+app.get("/api/user", (req, res) => res.json(readData(userPath)));
+
+app.post("/api/buy", (req, res) => {
+    const { productId } = req.body;
+    let products = readData(productsPath);
+    let user = readData(userPath);
+    
+    const product = products.find(p => p.id === productId);
+
+    if (!product) 
+    return res.status(404).json({ error: "Prodotto non trovato" });
+    if (product.stock <= 0) 
+    return res.status(400).json({ error: "Prodotto esaurito" });
+    if (user.credits < product.price)
+    return res.status(400).json({ error: "Crediti insufficienti" });
+
+    user.credits -= product.price;
+    product.stock -= 1;
+
+    writeData(userPath, user);
+    writeData(productsPath, products);
+    res.json({ message: "Acquisto completato!", user, product });
 });
 
-// Endpoint POST
-app.post('/api/messages', (req, res) => {
-    const nuovoMessaggio = req.body;
-    messages.push(nuovoMessaggio);
-    // Restituisci il messaggio di successo e i dati
-    res.status(201).json({ status: "success", added: nuovoMessaggio });
+
+app.post("/api/admin/add-credits", (req, res) => {
+    const { amount } = req.body;
+    let user = readData(userPath);
+    user.credits += parseInt(amount);
+    writeData(userPath, user);
+    res.json(user);
 });
 
-// La porta deve essere presa da process.env.PORT per funzionare su Render
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server in ascolto sulla porta ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
