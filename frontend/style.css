@@ -1,0 +1,29 @@
+body{
+font-family: Arial;
+background:#f5f5f5;
+padding:30px;
+}
+
+nav{
+margin-bottom:20px;
+}
+
+#prodotti{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+width:200px;
+box-shadow:0 0 5px rgba(0,0,0,0.2);
+}
+
+button{
+padding:8px 12px;
+margin-top:10px;
+cursor:pointer;
+}

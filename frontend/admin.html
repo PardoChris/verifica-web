@@ -1,15 +1,40 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <nav><a href="index.html">Torna allo Store</a></nav>
-    <h1>Pannello di Controllo</h1>
-    <button onclick="addAdminCredits()">Regala 100 Crediti all'Utente</button>
+
+<nav>
+<a href="index.html">Torna allo Store</a>
+</nav>
+
+<h1>Pannello Admin</h1>
+
+<h2>Aggiungi prodotto</h2>
+
+<input id="name" placeholder="Nome prodotto">
+<input id="price" placeholder="Prezzo">
+<input id="stock" placeholder="Stock">
+
+<button onclick="addProduct()">Aggiungi prodotto</button>
+
+<h2>Modifica stock</h2>
+
+<input id="productId" placeholder="ID prodotto">
+<input id="newStock" placeholder="Nuovo stock">
+
+<button onclick="updateStock()">Aggiorna stock</button>
+
+<h2>Crediti utente</h2>
+
+<button onclick="addAdminCredits()">Aggiungi 100 crediti</button>
 
 <script src="app.js"></script>
+
 </body>
 </html>

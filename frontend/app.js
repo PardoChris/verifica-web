@@ -1,66 +1,127 @@
-// 1. CONFIGURAZIONE: Cambia questo URL domani dopo il deploy su Render
-const API_BASE = "https://ecommerce-pardo.onrender.com/api"; 
+const API_BASE = "http://localhost:3000/api";
 
 async function loadStore() {
-    const container = document.getElementById("prodotti");
-    if (!container) return; 
 
-    try {
-        const userRes = await fetch(`${API_BASE}/user`);
-        const user = await userRes.json();
-        document.getElementById("saldo").innerHTML = `<h3>Crediti Disponibili: €${user.credits}</h3>`;
+    const saldoDiv = document.getElementById("saldo");
+    const prodottiDiv = document.getElementById("prodotti");
 
-        const prodRes = await fetch(`${API_BASE}/products`);
-        const products = await prodRes.json();
-        
-        container.innerHTML = products.map(p => `
-            <div class="card">
-                <h4>${p.name}</h4>
-                <p>Prezzo: €${p.price}</p>
-                <p>Disponibili: ${p.stock}</p>
-                <button onclick="buyProduct(${p.id})" ${p.stock <= 0 ? 'disabled' : ''}>
-                    ${p.stock > 0 ? 'Acquista' : 'Esaurito'}
-                </button>
-            </div>
-        `).join("");
-    } catch (err) {
-        console.error("Errore nel caricamento store:", err);
-    }
+    if (!prodottiDiv) return;
+
+    const userRes = await fetch(API_BASE + "/user");
+    const user = await userRes.json();
+
+    saldoDiv.innerHTML = "<h3>Crediti: €" + user.credits + "</h3>";
+
+    const prodRes = await fetch(API_BASE + "/products");
+    const products = await prodRes.json();
+
+    prodottiDiv.innerHTML = "";
+
+    products.forEach(p => {
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+        <h3>${p.name}</h3>
+        <p>Prezzo: €${p.price}</p>
+        <p>Disponibili: ${p.stock}</p>
+        <button onclick="buyProduct(${p.id})">Compra</button>
+        `;
+
+        prodottiDiv.appendChild(card);
+
+    });
+
 }
 
 async function buyProduct(id) {
-    try {
-        const res = await fetch(`${API_BASE}/buy`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId: id })
-        });
-        const result = await res.json();
-        
-        if (result.error) {
-            alert("Errore: " + result.error);
-        } else {
-            alert(result.message);
-            loadStore();
-        }
-    } catch (err) {
-        alert("Errore di connessione al server");
-    }
+
+    const res = await fetch(API_BASE + "/buy", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            productId: id
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.error)
+        alert(data.error);
+    else
+        alert("Acquisto completato");
+
+    loadStore();
+
+}
+
+async function addProduct() {
+
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const stock = document.getElementById("stock").value;
+
+    await fetch(API_BASE + "/admin/add-product", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name,
+            price,
+            stock
+        })
+    });
+
+    alert("Prodotto aggiunto");
+
+}
+
+async function updateStock() {
+
+    const productId = document.getElementById("productId").value;
+    const stock = document.getElementById("newStock").value;
+
+    const res = await fetch(API_BASE + "/admin/update-stock", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            productId: parseInt(productId),
+            stock: parseInt(stock)
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.error)
+        alert(data.error);
+    else
+        alert("Stock aggiornato");
+
 }
 
 async function addAdminCredits() {
-    try {
-        const res = await fetch(`${API_BASE}/admin/add-credits`, { 
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        });
-        const data = await res.json();
-        alert("Successo! Nuovo saldo utente: €" + data.credits);
-    } catch (err) {
-        alert("Errore nell'assegnazione crediti");
-    }
+
+    const res = await fetch(API_BASE + "/admin/add-credits", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            amount: 100
+        })
+    });
+
+    const data = await res.json();
+
+    alert("Nuovo saldo: €" + data.credits);
+
 }
 
-if (document.getElementById("prodotti")) {
-    loadStore();
-}
+loadStore();
